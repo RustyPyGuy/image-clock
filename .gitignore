@@ -1,0 +1,11 @@
+*.out
+__pycache__
+.pylintrc
+old
+example\ code
+# copy-to-windows.sh
+*.sh
+notes
+test*
+*.session
+session
