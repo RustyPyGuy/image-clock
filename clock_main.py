@@ -57,16 +57,28 @@ from file_enumeration import FileCatalog2
 from signal_handler import SignalHandler
 
 ## define file paths based on platform.
-if platform.system() == 'Linux':
-    IMAGE_PATH = "/var/lib/image-clock/images/"
-    FONTPATH_TIME=FONTPATH_DATE=FONTPATH_NEXT=\
-     "/var/lib/image-clock/fonts/Indulta/Indulta-SemiSerif-boldFFP.otf"
-elif platform.system() == 'Windows':
-    IMAGE_PATH = "C:/ProgramData/image-clock/images/"
-    FONTPATH_TIME=FONTPATH_DATE=FONTPATH_NEXT=\
-    "C:/ProgramData/image-clock/fonts/Indulta/Indulta-SemiSerif-boldFFP.otf"
-else:
-    raise Exception("File storage location not defined for OS type:", platform.system())
+
+
+try:
+    if platform.system() == 'Linux':
+        IMAGE_PATH = "/var/lib/image-clock/images/"
+        FONTPATH_TIME=FONTPATH_DATE=FONTPATH_NEXT=\
+         "/var/lib/image-clock/fonts/Indulta/Indulta-SemiSerif-boldFFP.otf"
+        if not os.path.exists(FONTPATH_TIME):
+            FONTPATH_TIME =""
+            print("Font not loaded in configured directory.  Will default to default system font.")
+
+    elif platform.system() == 'Windows':
+        IMAGE_PATH = "C:/ProgramData/image-clock/images/"
+        FONTPATH_TIME=FONTPATH_DATE=FONTPATH_NEXT=\
+        "C:/ProgramData/image-clock/fonts/Indulta/Indulta-SemiSerif-boldFFP.otf"
+        if not os.path.exists(FONTPATH_TIME):
+            FONTPATH_TIME =""
+            print("Font not loaded in configured directory.  Will default to default system font.")
+except:
+        print("File storage location not defined for OS type:",
+        platform.system(), " or font not loaded in configured directory.  Will default to detault system font.")
+        FONTPATH = ""
 
 ## Variables moved to settings.py and image-clock.ini
 # TIMEZONE = "CET"  # not currently used
@@ -316,11 +328,19 @@ Clock = pygame.time.Clock()
 # Initialize the analog clock timepiece
 a_clock = AnalogTimepiece(screen, centerRect, s.FRAME_RATE)
 
-#create fonts
-introFont = pygame.font.Font(FONTPATH_TIME, int(screen_height*(s.TIME_FONT_PERCENT/200)))
-timeFont = pygame.font.Font(FONTPATH_TIME, int(screen_height*(s.TIME_FONT_PERCENT/100)))
-dateFont = pygame.font.Font(FONTPATH_DATE, int(screen_height*(s.TIME_FONT_PERCENT/100)*.3))
-nextImageFont = pygame.font.Font(FONTPATH_NEXT, int(screen_height*(s.TIME_FONT_PERCENT/100)*.3))
+# Create fonts. Use default system font if fonts not loaded.
+if FONTPATH_TIME:
+    introFont = pygame.font.Font(FONTPATH_TIME, int(screen_height*(s.TIME_FONT_PERCENT/200)))
+    timeFont = pygame.font.Font(FONTPATH_TIME, int(screen_height*(s.TIME_FONT_PERCENT/100)))
+    dateFont = pygame.font.Font(FONTPATH_DATE, int(screen_height*(s.TIME_FONT_PERCENT/100)*.3))
+    nextImageFont = pygame.font.Font(FONTPATH_NEXT, int(screen_height*(s.TIME_FONT_PERCENT/100)*.3))
+else:
+    DEFAULT_FONT = pygame.font.get_default_font()
+    introFont = pygame.font.SysFont(DEFAULT_FONT, int(screen_height*(s.TIME_FONT_PERCENT/200)))
+    timeFont = pygame.font.SysFont(DEFAULT_FONT, int(screen_height*(s.TIME_FONT_PERCENT/100)))
+    dateFont = pygame.font.SysFont(DEFAULT_FONT, int(screen_height*(s.TIME_FONT_PERCENT/100)*.3))
+    nextImageFont = pygame.font.SysFont(DEFAULT_FONT, int(screen_height*(s.TIME_FONT_PERCENT/100)*.3))
+
 text_rect = pygame.Rect(0,0,0,0)
 
 #####

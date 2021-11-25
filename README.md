@@ -18,7 +18,7 @@ Successfully runs after significant configuration of data file directories and f
 ## Usage
 * This software requires significant configuration.  Namely, downloading and installing fonts, and providing images. Future versions should have something to run immediately.
 * Place image files in `/var/lib/image-clock/images/` the specified directory for your OS using the naming convention. This project does not include images, but I may include a few sample images in the future.  
-* Download fonts _Indulta_ and _Plat Nomor_. Install fonts to `/var/lib/image-clock/fonts/` For now, check the source file for the font names. I'll add that here later.
+* Download fonts _Indulta_ and _Plat Nomor_. Install fonts to `/var/lib/image-clock/fonts/` For now, check the source file for the font names.  If fonts are not available in these diretories, the program will attempt to load the default system font.
 * Configure the `image-clock.ini` file and the `settings.py` file.
 * execute `clock_main.py` to run the main program and display to an X session or to the Windows desktop.
 * Execute  `clock_main.py --help` to see a list of options. 
@@ -51,7 +51,7 @@ Each component file has a TODO, but in general:
 * Include a few images for this github upload.
 * Include more complete Raspberry Pi build information.
 * Anonymize/Genericize the supporting shell scripts for updating and management.
-* Have more robust file checking and alternatives for things like font files.
+* Have more robust file checking and alternatives for things like font files. Now should load default fonts if there are errors.
 
 ## License
 *I believe in strong open source licenses, even for small projects like this.*

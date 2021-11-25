@@ -62,6 +62,7 @@ import pygame
 from pygame.locals import *
 import pygame.gfxdraw
 import settings as s
+import os.path
 
 class AnalogTimepiece():
     def __init__(
@@ -581,17 +582,31 @@ class AnalogTimepiece():
                         self.BLACK,
                         self.TICK_R)
             # draw the rectangular logo
-            if platform.system() == 'Linux':
-                FONTPATH = "/var/lib/image-clock/fonts/PlatNomor/PlatNomor-eZ2dm.otf"
-            elif platform.system() == 'Windows':
-                FONTPATH = "C:/ProgramData/image-clock/fonts/PlatNomor/PlatNomor-eZ2dm.otf"
-            else:
-                raise Exception(
-                    "File storage location not defined for OS type:",
-                    platform.system())
+            try:
+                if platform.system() == 'Linux':
+                    FONTPATH = "/var/lib/image-clock/fonts/PlatNomor/PlatNomor-eZ2dm.otf"
+                    if not os.path.exists(FONTPATH):
+                        FONTPATH =""
+                    print("Font not loaded in configured directory.  Will default to default system font.")
+
+                elif platform.system() == 'Windows':
+                    FONTPATH = "C:/ProgramData/image-clock/fonts/PlatNomor/PlatNomor-eZ2dm.otf"
+                    if not os.path.exists(FONTPATH):
+                        FONTPATH =""
+                    print("Date display font not loaded in configured directory.  Will default to default system font.")
+            except:
+                    print("Font file storage location not defined for OS type:",
+                    platform.system(), " or date display font not loaded in configured directory.  Will default to detault system font.")
+                    FONTPATH = ""
             ### Calculate and prepare the date box.
             # calculate the maximum size of the date font box with the max character size.
-            self.dateTextFont = pygame.font.Font(FONTPATH, 3 * self.CLOCK_R // 25)
+            if FONTPATH:
+                self.dateTextFont = pygame.font.Font(FONTPATH, 3 * self.CLOCK_R // 25)
+            else:
+                DEFAULT_FONT = pygame.font.get_default_font()
+                self.dateTextFont = pygame.font.SysFont(DEFAULT_FONT, 3 * self.CLOCK_R // 25)
+
+
             dateBoxSurface = self.dateTextFont.render("88 . 88", 1, self.RED)
             self.dateBoxRect = dateBoxSurface.get_rect()
             self.dateBoxRect.center = self.circle_point(
@@ -601,7 +616,7 @@ class AnalogTimepiece():
                 11 * self.dateBoxRect.h // 16)
 
             self.draw_beveled_rect(self.backgroundSurface, self.dateBoxRect,self.dateBoxRect.h//3)
-            dateText = self.now_var.strftime("%m.%d")
+            dateText = self.now_var.strftime("%d.%m")
             dateTextSurface = self.dateTextFont.render(dateText, 1, self.WHITE)
             dateTextRect = dateTextSurface.get_rect()
             dateTextRect.center = self.dateBoxRect.center
